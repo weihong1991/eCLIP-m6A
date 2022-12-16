@@ -86,7 +86,7 @@ turning_ntree<-foreach(xxxx=ntree, .packages="randomForest")%dopar%{
     return(list(myauc=myauc,df=df,imp=imp,oob=oob))
   })
 }
-saveRDS(turning,paste0("/mount/ictr1/chenglab/whong/m6a/RBP/random100/ntree_100/ntree_",i),compress = "gzip")
+
 
   
 #----------------------------------
@@ -96,7 +96,7 @@ tr.dat=data$tr.dat
 te.dat=data$te.dat
 mtry<-c(6,8,10,11,12,14,16,18,20,22,24,26,30,35,40,45)
 
-turning<-foreach(xxxx=mtry, .packages="randomForest")%dopar%{
+turning_mtry<-foreach(xxxx=mtry, .packages="randomForest")%dopar%{
   #------------------------------
   ## using all featues
   
@@ -138,6 +138,51 @@ turning<-foreach(xxxx=mtry, .packages="randomForest")%dopar%{
   oob<-myfit$err.rate[,1]
   return(list(myauc=myauc,df=df,imp=imp,oob=oob))
 }
-saveRDS(turning,paste0("/mount/ictr1/chenglab/whong/m6a/RBP/random100/mtry_100/mtry_",i),compress = "gzip")
 
+#----------------------------------
+# method comparison
+
+tr.dat2<-tr.dat
+tr.dat2$myy<-as.numeric(setNames(c(0,1),c("N","Y"))[tr.dat2$myy])
+
+RFfit <- randomForest(myy~., importance=T, data=tr.dat)
+SVMfit_linear <- svm(myy ~ ., data = tr.dat, kernel = "linear", scale = FALSE,probability=TRUE)
+logit_fit <- glm(myy ~ ., data = tr.dat2, family = "binomial")
+desition_fit <- rpart(myy ~ ., data = tr.dat,method="class")
+cond_fit <- ctree(myy ~ ., data = tr.dat2)
+
+RFpredict = predict(RFfit, te.dat[,-1], type="prob")
+SVMpredict = predict(SVMfit_linear, te.dat[,-1],probability=TRUE)
+logitpredict = predict(logit_fit,te.dat[,-1],type = "response")
+logitpredict = data.frame("Y"=logitpredict,"N"=1-logitpredict)
+desitionpredict = predict(desition_fit, te.dat[,-1], type="prob")
+condpredict = predict(cond_fit, te.dat[,-1],type="prob")
+condpredict = unlist(condpredict)
+condpredict = data.frame("Y"=condpredict,"N"=1-condpredict)
+
+aucs<-lapply(list(RFpredict,attr(SVMpredict,"probabilities"),logitpredict,desitionpredict,condpredict),function(aa){
+  
+  res = data.frame(mod=te.dat[,1], prob=aa)
+  thr = (1:99)*0.01
+  yy =  xx =  rep(0, length(thr))
+  for(j in 1:length(thr))
+  {
+    aa = sum(res[,"prob.Y"]>=thr[j] & res[,1]=="Y")
+    bb = sum(res[,"prob.Y"]<thr[j] & res[,1]=="Y")
+    cc = sum(res[,"prob.Y"]>=thr[j] & res[,1]=="N")
+    dd = sum(res[,"prob.Y"]<thr[j] & res[,1]=="N")
+    yy[j] = aa/(aa+bb)
+    xx[j] = cc/(cc+dd)
+  }
+  xx = c(1, xx, 0)
+  yy = c(1, yy, 0)
+  tmp1 = tmp2 = rep(0,100)
+  for(j in 1:100)
+  {
+    tmp1[j] = xx[j]-xx[j+1]
+    tmp2[j] = (yy[j+1]+yy[j])/2	
+  }
+  myauc = sum(tmp1*tmp2)
+  myauc
+})
 

@@ -9,6 +9,10 @@ load("RBP_eCLIP_RMBase_HEPG2_GSM908331_matrix_mean_model_abs.rda")
 #or, load K562
 #load("RBP_eCLIP_RMBase_K562_Parental_PMID30297871_matrix_mean_model_abs.rda")
 
+#or, load histone
+#load("RBP_eCLIP_RMBase_HEPG2_GSM908331_matrix_mean_model_Histone_abs.rda")
+#load("RBP_eCLIP_RMBase_K562_Parental_PMID30297871_matrix_mean_model_Histone_abs.rda")
+
 #----------------------------------
 
 tr.siz = 5000 # random sample 5000 sites
