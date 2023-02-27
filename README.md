@@ -15,3 +15,7 @@ RBP_eCLIP_RMBase_HEPG2_GSM908331_matrix_mean_model_Histone_abs.zip
 RBP_eCLIP_RMBase_HEPG2_GSM908331_matrix_mean_model_abs.zip
 RBP_eCLIP_RMBase_K562_Parental_PMID30297871_matrix_mean_model_Histone_abs.zip
 RBP_eCLIP_RMBase_K562_Parental_PMID30297871_matrix_mean_model_abs.zip
+
+## Reference 
+
+Wei Hong, Yanding Zhao, Yi-Lan Weng and Chao Cheng, Random Forest model reveals the interaction between N6-methyladenosine (m6A) modifications and RNA-binding proteins. iScience, 2023 DOI:https://doi.org/10.1016/j.isci.2023.106250
