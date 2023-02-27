@@ -1,5 +1,5 @@
 # eCLIP-m6A
-Core codes and raw data for predicing m6A modifications from RBP eCLIP/Histone CHIP data,
+Core codes and raw data for predicing m6A modifications from RBP eCLIP/Histone CHIP data.
 A copy from our lab github folder https://github.com/Cheng-Lab-GitHub/eCLIP-m6A
 ## Example codes
 
